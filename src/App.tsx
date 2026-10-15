@@ -15,8 +15,9 @@ const ResourcePage    = lazy(() => import('./pages/ResourcePage'));
 const AboutPage       = lazy(() => import('./pages/AboutPage'));
 const ContactPage     = lazy(() => import('./pages/ContactPage'));
 const PrivacyPage     = lazy(() => import('./pages/PrivacyPage'));
-const TermsPage       = lazy(() => import('./pages/TermsPage'));
-const NotFoundPage    = lazy(() => import('./pages/NotFoundPage'));
+const TermsPage          = lazy(() => import('./pages/TermsPage'));
+const SubmitResourcePage = lazy(() => import('./pages/SubmitResourcePage'));
+const NotFoundPage       = lazy(() => import('./pages/NotFoundPage'));
 
 // ---- Lazy-loaded admin pages ----
 const AdminLoginPage  = lazy(() => import('./pages/admin/LoginPage'));
@@ -25,6 +26,7 @@ const AdminSchemes    = lazy(() => import('./pages/admin/SchemesPage'));
 const AdminSubjects   = lazy(() => import('./pages/admin/SubjectsPage'));
 const AdminResources  = lazy(() => import('./pages/admin/ResourcesPage'));
 const AdminUpload     = lazy(() => import('./pages/admin/UploadPage'));
+const AdminSettings   = lazy(() => import('./pages/admin/SettingsPage'));
 
 // ---- Route guard ----
 function RequireAdmin({ children }: { children: React.ReactNode }) {
@@ -82,6 +84,7 @@ export default function App() {
         <Route path="/contact"  element={<PublicLayout><ContactPage /></PublicLayout>} />
         <Route path="/privacy"  element={<PublicLayout><PrivacyPage /></PublicLayout>} />
         <Route path="/terms"    element={<PublicLayout><TermsPage /></PublicLayout>} />
+        <Route path="/submit-resource" element={<PublicLayout><SubmitResourcePage /></PublicLayout>} />
 
         {/* ---- Admin Routes ---- */}
         <Route path="/admin/login" element={<AdminLoginPage />} />
@@ -104,6 +107,10 @@ export default function App() {
         <Route
           path="/admin/resources/upload"
           element={<RequireAdmin><AdminUpload /></RequireAdmin>}
+        />
+        <Route
+          path="/admin/settings"
+          element={<RequireAdmin><AdminSettings /></RequireAdmin>}
         />
 
         {/* ---- 404 ---- */}
