@@ -1,0 +1,46 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper function to verify admin role
+    function isAdmin() {
+      return request.auth != null && (
+        request.auth.token.admin == true ||
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+      );
+    }
+
+    // Schemes: public can read active schemes, admins can write
+    match /schemes/{schemeId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Subjects: public can read active subjects, admins can write
+    match /subjects/{subjectId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Resources: public can read published resources, admins can read/write all
+    match /resources/{resourceId} {
+      allow read: if resource.data.status == 'published' || isAdmin();
+      allow write: if isAdmin();
+      // Allow atomic increment on downloadCount from client
+      allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['downloadCount'])
+                    && request.resource.data.downloadCount == resource.data.downloadCount + 1;
+    }
+
+    // Download analytics events
+    match /download_events/{eventId} {
+      allow create: if true;
+      allow read, update, delete: if isAdmin();
+    }
+
+    // Admin profiles
+    match /admins/{adminId} {
+      allow read: if request.auth != null && request.auth.uid == adminId;
+      allow write: if isAdmin();
+    }
+  }
+}
