@@ -15,6 +15,7 @@ export default function SchemesPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    document.title = 'VTU ECE Academic Schemes | ECEForge';
     const q = query(collection(db, 'schemes'), where('active', '==', true), orderBy('name', 'asc'));
     const unsub = onSnapshot(
       q,

@@ -2,7 +2,7 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     
-    // Helper function to verify admin role
+    // Helper function to verify admin authorization via custom claim or admins collection
     function isAdmin() {
       return request.auth != null && (
         request.auth.token.admin == true ||
@@ -10,25 +10,42 @@ service cloud.firestore {
       );
     }
 
-    // Schemes: public can read active schemes, admins can write
+    // Schemes: public can read active schemes, admins have full write access
     match /schemes/{schemeId} {
       allow read: if true;
       allow write: if isAdmin();
     }
 
-    // Subjects: public can read active subjects, admins can write
+    // Subjects: public can read active subjects, admins have full write access
     match /subjects/{subjectId} {
       allow read: if true;
       allow write: if isAdmin();
     }
 
-    // Resources: public can read published resources, admins can read/write all
+    // Resources: public can read ONLY published resources; admins can read all
     match /resources/{resourceId} {
       allow read: if resource.data.status == 'published' || isAdmin();
       allow write: if isAdmin();
-      // Allow atomic increment on downloadCount from client
+      
+      // Allow atomic increment on downloadCount from public client
       allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['downloadCount'])
                     && request.resource.data.downloadCount == resource.data.downloadCount + 1;
+    }
+
+    // Student / Peer resource submissions queue (isolated from published resources)
+    match /submissions/{submissionId} {
+      // Unauthenticated students can submit resources as 'pending'
+      allow create: if request.resource.data.keys().hasAll(['schemeId', 'semesterNumber', 'subjectId', 'title', 'category', 'storagePath'])
+                    && request.resource.data.status == 'pending';
+      // Only authenticated admins can inspect, update, or remove submissions
+      allow read, update, delete: if isAdmin();
+    }
+
+    // Resource issue reports (broken links, wrong syllabus, etc.)
+    match /reports/{reportId} {
+      allow create: if request.resource.data.keys().hasAll(['resourceId', 'reason'])
+                    && request.resource.data.reason is string;
+      allow read, update, delete: if isAdmin();
     }
 
     // Download analytics events
@@ -37,7 +54,7 @@ service cloud.firestore {
       allow read, update, delete: if isAdmin();
     }
 
-    // Admin profiles
+    // Admin profiles: protected allowlist
     match /admins/{adminId} {
       allow read: if request.auth != null && request.auth.uid == adminId;
       allow write: if isAdmin();

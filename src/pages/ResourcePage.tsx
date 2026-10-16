@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { ref, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '@/lib/firebase';
 import { recordDownload } from '@/lib/firestore';
+import { useAuth } from '@/context/AuthContext';
 import { Breadcrumb } from '@/components/layout/Breadcrumb';
 import { CategoryBadge, StatusBadge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
@@ -40,6 +41,8 @@ export default function ResourcePage() {
   const [reportReason, setReportReason] = useState('');
   const [submittingReport, setSubmittingReport] = useState(false);
 
+  const { isAdmin } = useAuth();
+
   useEffect(() => {
     async function loadResourceData() {
       if (!resourceId) return;
@@ -53,7 +56,16 @@ export default function ResourcePage() {
         }
 
         const resData = { id: resDoc.id, ...resDoc.data() } as Resource;
+
+        // Privacy check: Non-administrators cannot view draft or archived resources
+        if (resData.status !== 'published' && !isAdmin) {
+          setError('This resource is currently unpublished or archived.');
+          setLoading(false);
+          return;
+        }
+
         setResource(resData);
+        document.title = `${resData.title} | ECEForge`;
 
         // Fetch subject & scheme in parallel
         const [subDoc, schemeDoc] = await Promise.all([
@@ -79,14 +91,18 @@ export default function ResourcePage() {
         }
       } catch (err: any) {
         console.error(err);
-        setError('Failed to load resource details.');
+        if (err?.code === 'permission-denied') {
+          setError('This resource is not publicly accessible.');
+        } else {
+          setError('Failed to load resource details.');
+        }
       } finally {
         setLoading(false);
       }
     }
 
     loadResourceData();
-  }, [resourceId]);
+  }, [resourceId, isAdmin]);
 
   const handleDownload = async () => {
     if (!resourceId) return;
@@ -105,15 +121,28 @@ export default function ResourcePage() {
     setTimeout(() => setCopied(false), 2500);
   };
 
-  const handleReportSubmit = (e: React.FormEvent) => {
+  const handleReportSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!resourceId || !reportReason.trim()) return;
     setSubmittingReport(true);
-    setTimeout(() => {
-      setSubmittingReport(false);
+    try {
+      await addDoc(collection(db, 'reports'), {
+        resourceId,
+        resourceTitle: resource?.title || 'Unknown',
+        reason: reportReason.trim(),
+        status: 'open',
+        createdAt: serverTimestamp(),
+        timestamp: serverTimestamp(),
+      });
       setReportModalOpen(false);
       setReportReason('');
-      toast.success('Thank you. Resource report submitted for review.');
-    }, 600);
+      toast.success('Thank you. Issue report submitted for administrator review.');
+    } catch (err) {
+      console.error('Failed to submit report:', err);
+      toast.error('Could not submit report. Please try again.');
+    } finally {
+      setSubmittingReport(false);
+    }
   };
 
   const formatFileSize = (bytes?: number) => {

@@ -84,12 +84,13 @@ export async function getSubjectsBySchemeAndSemester(schemeId: string, semesterN
   const q = query(
     subjectsRef(),
     where('schemeId', '==', schemeId),
-    where('semesterNumber', '==', semesterNumber),
     where('active', '==', true),
-    orderBy('name'),
   );
   const snap = await getDocs(q);
-  return snap.docs.map(d => ({ id: d.id, ...d.data() } as Subject));
+  return snap.docs
+    .map(d => ({ id: d.id, ...d.data() } as Subject))
+    .filter(s => s.semesterNumber === semesterNumber)
+    .sort((a, b) => a.name.localeCompare(b.name));
 }
 
 export async function getSubjectsByScheme(schemeId: string): Promise<Subject[]> {
@@ -97,17 +98,22 @@ export async function getSubjectsByScheme(schemeId: string): Promise<Subject[]> 
     subjectsRef(),
     where('schemeId', '==', schemeId),
     where('active', '==', true),
-    orderBy('semesterNumber'),
-    orderBy('name'),
   );
   const snap = await getDocs(q);
-  return snap.docs.map(d => ({ id: d.id, ...d.data() } as Subject));
+  return snap.docs
+    .map(d => ({ id: d.id, ...d.data() } as Subject))
+    .sort((a, b) => {
+      if (a.semesterNumber !== b.semesterNumber) return a.semesterNumber - b.semesterNumber;
+      return a.name.localeCompare(b.name);
+    });
 }
 
 export async function getAllSubjects(): Promise<Subject[]> {
-  const q = query(subjectsRef(), orderBy('name'));
+  const q = query(subjectsRef());
   const snap = await getDocs(q);
-  return snap.docs.map(d => ({ id: d.id, ...d.data() } as Subject));
+  return snap.docs
+    .map(d => ({ id: d.id, ...d.data() } as Subject))
+    .sort((a, b) => a.name.localeCompare(b.name));
 }
 
 export async function getSubjectBySlug(slug: string, schemeId?: string): Promise<Subject | null> {
@@ -152,11 +158,14 @@ export async function getPublishedResourcesBySubject(subjectId: string): Promise
     resourcesRef(),
     where('subjectId', '==', subjectId),
     where('status', '==', 'published'),
-    orderBy('category'),
-    orderBy('createdAt', 'desc'),
   );
   const snap = await getDocs(q);
-  return snap.docs.map(d => ({ id: d.id, ...d.data() } as Resource));
+  const items = snap.docs.map(d => ({ id: d.id, ...d.data() } as Resource));
+  return items.sort((a, b) => {
+    if (a.category !== b.category) return a.category.localeCompare(b.category);
+    if ((a.unitNumber ?? 0) !== (b.unitNumber ?? 0)) return (a.unitNumber ?? 0) - (b.unitNumber ?? 0);
+    return a.title.localeCompare(b.title);
+  });
 }
 
 export async function getRecentResources(count: number = 8): Promise<Resource[]> {

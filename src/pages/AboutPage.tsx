@@ -4,6 +4,9 @@ import { Card } from '@/components/ui/Card';
 import { Cpu, BookOpen, Layers, ShieldCheck, Target, Sparkles } from 'lucide-react';
 
 export default function AboutPage() {
+  React.useEffect(() => {
+    document.title = 'About ECEForge | Academic Knowledge Platform';
+  }, []);
   return (
     <div className="min-h-screen bg-slate-50/70 pb-20">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">

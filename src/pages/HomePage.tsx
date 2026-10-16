@@ -153,6 +153,10 @@ export default function HomePage() {
   const { data: recent, loading: recentLoading }   = useRecentResources(8);
   const { data: popular, loading: popularLoading } = usePopularResources(6);
 
+  React.useEffect(() => {
+    document.title = 'ECEForge — Learn. Build. Engineer. | VTU ECE Academic Hub';
+  }, []);
+
   return (
     <div className="bg-white">
       {/* ─── Hero ─── */}

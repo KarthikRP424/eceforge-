@@ -31,6 +31,7 @@ export default function SchemePage() {
           return;
         }
         setScheme(s);
+        document.title = `${s.name} Notes & Semesters | ECEForge`;
         const subs = await getSubjectsByScheme(s.id);
         setSubjects(subs);
       } catch (err: any) {

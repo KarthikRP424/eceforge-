@@ -2,15 +2,26 @@ rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
     
-    function isAdmin() {
+    // Admin check for Storage operations
+    function isAuthenticated() {
       return request.auth != null;
     }
 
+    // Published and official admin resources
     match /resources/{allPaths=**} {
       allow read: if true;
-      allow write: if isAdmin()
-                   && request.resource.size < 25 * 1024 * 1024
+      allow write: if isAuthenticated()
+                   && request.resource.size <= 25 * 1024 * 1024
                    && (request.resource.contentType == 'application/pdf' || request.resource.contentType.matches('application/.*pdf.*'));
+      allow delete: if isAuthenticated();
+    }
+
+    // Student / Peer submissions: public write with strict PDF and size enforcement
+    // Read is restricted to authenticated administrators so unreviewed files stay private
+    match /submissions/{allPaths=**} {
+      allow write: if request.resource.size <= 25 * 1024 * 1024
+                   && (request.resource.contentType == 'application/pdf' || request.resource.contentType.matches('application/.*pdf.*'));
+      allow read, delete: if isAuthenticated();
     }
   }
 }

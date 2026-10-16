@@ -39,7 +39,7 @@ export default function BrowsePage() {
   // Search and filter parameters from URL query
   const queryParam = searchParams.get('q') ?? '';
   const schemeParam = searchParams.get('scheme') ?? 'all';
-  const semParam = searchParams.get('sem') ?? 'all';
+  const semParam = searchParams.get('sem') ?? searchParams.get('semester') ?? 'all';
   const categoryParam = searchParams.get('category') ?? 'all';
 
   const [searchQuery, setSearchQuery] = useState(queryParam);
@@ -67,7 +67,15 @@ export default function BrowsePage() {
       nextParams.delete('q');
     }
     setSearchParams(nextParams, { replace: true });
-  }, [debouncedQuery]);
+
+    if (debouncedQuery.trim()) {
+      document.title = `Search: "${debouncedQuery.trim()}" | ECEForge`;
+    } else if (semParam !== 'all') {
+      document.title = `Semester ${semParam} Notes & Resources | ECEForge`;
+    } else {
+      document.title = 'Browse ECE Notes & Resources | ECEForge';
+    }
+  }, [debouncedQuery, semParam]);
 
   // Load active schemes
   useEffect(() => {

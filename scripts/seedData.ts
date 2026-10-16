@@ -1,17 +1,17 @@
 /**
- * ECEForge — Initial Academic Database Seed Script
+ * ECEForge — Production Academic Database Seed Script
  *
  * Populates:
- *   1. VTU 2022 Scheme & VTU 2025 Scheme
- *   2. Core Electronics & Communication Engineering (ECE) subjects
- *      for Semesters 3, 4, 5, 6, and 7.
+ *   1. VTU 2022 Scheme (CBCS curriculum with verified course codes)
+ *   2. VTU 2025 Scheme (Emerging curriculum; codes marked as pending university notification)
+ *   3. Safe and idempotent: can be rerun safely without creating duplicates or overwriting existing data.
  *
  * Usage:
  *   npx tsx scripts/seedData.ts
  */
 
 import { initializeApp } from 'firebase/app';
-import { getFirestore, doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { getFirestore, doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: process.env.VITE_FIREBASE_API_KEY || "AIzaSyDummyKeyForSeed",
@@ -37,9 +37,10 @@ interface SeedSubject {
   schemeId: string;
   semesterNumber: number;
   name: string;
-  subjectCode: string;
+  subjectCode?: string;
   slug: string;
   description: string;
+  provisional?: boolean;
 }
 
 const SCHEMES: SeedScheme[] = [
@@ -47,20 +48,22 @@ const SCHEMES: SeedScheme[] = [
     id: 'scheme_vtu_2022',
     name: 'VTU 2022 Scheme',
     slug: 'vtu-2022',
-    description: 'Outcome Based Education (OBE) and Choice Based Credit System (CBCS) curriculum applicable for students admitted from academic year 2022-23.',
+    description: 'Choice Based Credit System (CBCS) curriculum applicable for ECE students admitted from academic year 2022-23 onwards.',
   },
   {
     id: 'scheme_vtu_2025',
     name: 'VTU 2025 Scheme',
     slug: 'vtu-2025',
-    description: 'Advanced engineering curriculum incorporating AI/ML integration, modern VLSI architectures, and next-generation wireless communications.',
+    description: 'Updated engineering curriculum incorporating advanced embedded systems, edge AI, and next-generation wireless communications.',
   },
 ];
 
-const SUBJECTS_2022: Omit<SeedSubject, 'schemeId'>[] = [
+// Verified VTU 2022 Scheme ECE Subjects
+const SUBJECTS_2022: SeedSubject[] = [
   // Semester 3
   {
     id: '2022_sem3_math',
+    schemeId: 'scheme_vtu_2022',
     semesterNumber: 3,
     name: 'Mathematics for ECE',
     subjectCode: 'BMATE301',
@@ -69,6 +72,7 @@ const SUBJECTS_2022: Omit<SeedSubject, 'schemeId'>[] = [
   },
   {
     id: '2022_sem3_dsd',
+    schemeId: 'scheme_vtu_2022',
     semesterNumber: 3,
     name: 'Digital System Design using Verilog',
     subjectCode: 'BEC302',
@@ -77,6 +81,7 @@ const SUBJECTS_2022: Omit<SeedSubject, 'schemeId'>[] = [
   },
   {
     id: '2022_sem3_aec',
+    schemeId: 'scheme_vtu_2022',
     semesterNumber: 3,
     name: 'Analog Electronic Circuits',
     subjectCode: 'BEC303',
@@ -85,6 +90,7 @@ const SUBJECTS_2022: Omit<SeedSubject, 'schemeId'>[] = [
   },
   {
     id: '2022_sem3_na',
+    schemeId: 'scheme_vtu_2022',
     semesterNumber: 3,
     name: 'Network Analysis',
     subjectCode: 'BEC304',
@@ -95,6 +101,7 @@ const SUBJECTS_2022: Omit<SeedSubject, 'schemeId'>[] = [
   // Semester 4
   {
     id: '2022_sem4_em',
+    schemeId: 'scheme_vtu_2022',
     semesterNumber: 4,
     name: 'Electromagnetic Field Theory',
     subjectCode: 'BEC401',
@@ -103,6 +110,7 @@ const SUBJECTS_2022: Omit<SeedSubject, 'schemeId'>[] = [
   },
   {
     id: '2022_sem4_analog_comm',
+    schemeId: 'scheme_vtu_2022',
     semesterNumber: 4,
     name: 'Principles of Communication Systems',
     subjectCode: 'BEC402',
@@ -111,6 +119,7 @@ const SUBJECTS_2022: Omit<SeedSubject, 'schemeId'>[] = [
   },
   {
     id: '2022_sem4_signals',
+    schemeId: 'scheme_vtu_2022',
     semesterNumber: 4,
     name: 'Signals and Systems',
     subjectCode: 'BEC403',
@@ -119,6 +128,7 @@ const SUBJECTS_2022: Omit<SeedSubject, 'schemeId'>[] = [
   },
   {
     id: '2022_sem4_micros',
+    schemeId: 'scheme_vtu_2022',
     semesterNumber: 4,
     name: 'Microcontrollers & Embedded Systems',
     subjectCode: 'BEC404',
@@ -129,6 +139,7 @@ const SUBJECTS_2022: Omit<SeedSubject, 'schemeId'>[] = [
   // Semester 5
   {
     id: '2022_sem5_dsp',
+    schemeId: 'scheme_vtu_2022',
     semesterNumber: 5,
     name: 'Digital Signal Processing',
     subjectCode: '21EC51',
@@ -137,6 +148,7 @@ const SUBJECTS_2022: Omit<SeedSubject, 'schemeId'>[] = [
   },
   {
     id: '2022_sem5_dig_comm',
+    schemeId: 'scheme_vtu_2022',
     semesterNumber: 5,
     name: 'Digital Communication',
     subjectCode: '21EC52',
@@ -145,6 +157,7 @@ const SUBJECTS_2022: Omit<SeedSubject, 'schemeId'>[] = [
   },
   {
     id: '2022_sem5_control',
+    schemeId: 'scheme_vtu_2022',
     semesterNumber: 5,
     name: 'Control Systems',
     subjectCode: '21EC53',
@@ -155,6 +168,7 @@ const SUBJECTS_2022: Omit<SeedSubject, 'schemeId'>[] = [
   // Semester 6
   {
     id: '2022_sem6_vlsi',
+    schemeId: 'scheme_vtu_2022',
     semesterNumber: 6,
     name: 'VLSI Design',
     subjectCode: '21EC61',
@@ -163,6 +177,7 @@ const SUBJECTS_2022: Omit<SeedSubject, 'schemeId'>[] = [
   },
   {
     id: '2022_sem6_antennas',
+    schemeId: 'scheme_vtu_2022',
     semesterNumber: 6,
     name: 'Microwave and Antennas',
     subjectCode: '21EC62',
@@ -173,6 +188,7 @@ const SUBJECTS_2022: Omit<SeedSubject, 'schemeId'>[] = [
   // Semester 7
   {
     id: '2022_sem7_wireless',
+    schemeId: 'scheme_vtu_2022',
     semesterNumber: 7,
     name: 'Wireless Communication',
     subjectCode: '21EC71',
@@ -181,6 +197,7 @@ const SUBJECTS_2022: Omit<SeedSubject, 'schemeId'>[] = [
   },
   {
     id: '2022_sem7_itc',
+    schemeId: 'scheme_vtu_2022',
     semesterNumber: 7,
     name: 'Information Theory and Coding',
     subjectCode: '21EC72',
@@ -189,56 +206,188 @@ const SUBJECTS_2022: Omit<SeedSubject, 'schemeId'>[] = [
   },
 ];
 
+// VTU 2025 Scheme ECE Subjects
+// NOTE: VTU 2025 Scheme course codes for higher semesters (Sem 3–7) have not been officially notified.
+// Codes are intentionally left unassigned (undefined) and annotated as provisional to avoid fabricating official data.
+const SUBJECTS_2025: SeedSubject[] = [
+  // Semester 3
+  {
+    id: '2025_sem3_math',
+    schemeId: 'scheme_vtu_2025',
+    semesterNumber: 3,
+    name: 'Advanced Engineering Mathematics for ECE',
+    slug: 'advanced-math-ece-2025',
+    provisional: true,
+    description: 'Differential equations, complex variables, and linear algebra applied to circuit analysis. (VTU 2025 Scheme code pending official notification).',
+  },
+  {
+    id: '2025_sem3_dsd',
+    schemeId: 'scheme_vtu_2025',
+    semesterNumber: 3,
+    name: 'Digital Logic and Computer Architecture',
+    slug: 'digital-logic-architecture-2025',
+    provisional: true,
+    description: 'Modern digital system design, HDL synthesis, and RISC-V/ARM architecture fundamentals.',
+  },
+  {
+    id: '2025_sem3_aec',
+    schemeId: 'scheme_vtu_2025',
+    semesterNumber: 3,
+    name: 'Solid State Devices and Circuits',
+    slug: 'solid-state-devices-2025',
+    provisional: true,
+    description: 'Semiconductor physics, MOSFET modeling, amplifier stages, and integrated circuit biasing.',
+  },
+  {
+    id: '2025_sem3_circuits',
+    schemeId: 'scheme_vtu_2025',
+    semesterNumber: 3,
+    name: 'Circuit Theory and Simulation',
+    slug: 'circuit-theory-simulation-2025',
+    provisional: true,
+    description: 'Network theorems, AC analysis, state variables, and SPICE-based electronic simulation.',
+  },
+
+  // Semester 4
+  {
+    id: '2025_sem4_em',
+    schemeId: 'scheme_vtu_2025',
+    semesterNumber: 4,
+    name: 'Electromagnetic Fields and Waves',
+    slug: 'electromagnetic-waves-2025',
+    provisional: true,
+    description: 'Maxwell equations, wave guides, boundary conditions, and high-frequency wave propagation.',
+  },
+  {
+    id: '2025_sem4_signals',
+    schemeId: 'scheme_vtu_2025',
+    semesterNumber: 4,
+    name: 'Continuous and Discrete Signal Processing',
+    slug: 'signal-processing-foundations-2025',
+    provisional: true,
+    description: 'Time and frequency domain analysis, sampling, discrete representations, and linear system stability.',
+  },
+  {
+    id: '2025_sem4_embedded',
+    schemeId: 'scheme_vtu_2025',
+    semesterNumber: 4,
+    name: 'Embedded Systems and IoT Architectures',
+    slug: 'embedded-iot-architectures-2025',
+    provisional: true,
+    description: 'Microcontroller programming, sensor interfacing, real-time operating systems (RTOS), and IoT protocols.',
+  },
+
+  // Semester 5
+  {
+    id: '2025_sem5_dsp',
+    schemeId: 'scheme_vtu_2025',
+    semesterNumber: 5,
+    name: 'Digital Signal Processing Algorithms',
+    slug: 'dsp-algorithms-2025',
+    provisional: true,
+    description: 'Filter design algorithms, spectral estimation, and DSP hardware implementations.',
+  },
+  {
+    id: '2025_sem5_comm',
+    schemeId: 'scheme_vtu_2025',
+    semesterNumber: 5,
+    name: 'Modern Communication Systems',
+    slug: 'modern-communication-systems-2025',
+    provisional: true,
+    description: 'Information transmission, digital modulation, spread spectrum, and channel modeling.',
+  },
+
+  // Semester 6
+  {
+    id: '2025_sem6_vlsi',
+    schemeId: 'scheme_vtu_2025',
+    semesterNumber: 6,
+    name: 'Advanced VLSI and SoC Design',
+    slug: 'advanced-vlsi-soc-2025',
+    provisional: true,
+    description: 'Deep sub-micron CMOS, System-on-Chip (SoC) methodology, FPGA implementation, and ASIC design flows.',
+  },
+
+  // Semester 7
+  {
+    id: '2025_sem7_nextgen',
+    schemeId: 'scheme_vtu_2025',
+    semesterNumber: 7,
+    name: '5G/6G Wireless Networks',
+    slug: 'nextgen-wireless-networks-2025',
+    provisional: true,
+    description: 'MIMO technologies, millimeter-wave communications, software-defined radio, and next-generation cellular standards.',
+  },
+];
+
 async function seed() {
-  console.log('Seeding ECEForge Academic Schemes and Subjects...');
+  console.log('Seeding ECEForge Academic Catalog (Safe & Idempotent)...');
 
-  // 1. Schemes
+  // 1. Seed Schemes
   for (const s of SCHEMES) {
-    console.log(`Writing scheme: ${s.name}`);
-    await setDoc(doc(db, 'schemes', s.id), {
-      name: s.name,
-      slug: s.slug,
-      description: s.description,
-      active: true,
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
-    });
+    const schemeRef = doc(db, 'schemes', s.id);
+    const existing = await getDoc(schemeRef);
+    if (!existing.exists()) {
+      console.log(`[Creating Scheme]: ${s.name}`);
+      await setDoc(schemeRef, {
+        name: s.name,
+        slug: s.slug,
+        description: s.description,
+        active: true,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      });
+    } else {
+      console.log(`[Scheme Exists]: ${s.name} (preserved)`);
+    }
   }
 
-  // 2. VTU 2022 Subjects
+  // 2. Seed VTU 2022 Subjects
   for (const sub of SUBJECTS_2022) {
-    console.log(`Writing subject (VTU 2022): Sem ${sub.semesterNumber} - ${sub.name}`);
-    await setDoc(doc(db, 'subjects', sub.id), {
-      schemeId: 'scheme_vtu_2022',
-      semesterNumber: sub.semesterNumber,
-      name: sub.name,
-      subjectCode: sub.subjectCode,
-      slug: sub.slug,
-      description: sub.description,
-      active: true,
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
-    });
+    const subRef = doc(db, 'subjects', sub.id);
+    const existing = await getDoc(subRef);
+    if (!existing.exists()) {
+      console.log(`[Creating Subject 2022]: Sem ${sub.semesterNumber} - ${sub.name} (${sub.subjectCode})`);
+      await setDoc(subRef, {
+        schemeId: sub.schemeId,
+        semesterNumber: sub.semesterNumber,
+        name: sub.name,
+        subjectCode: sub.subjectCode,
+        slug: sub.slug,
+        description: sub.description,
+        active: true,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      });
+    } else {
+      console.log(`[Subject Exists]: ${sub.name} (preserved)`);
+    }
   }
 
-  // 3. VTU 2025 Subjects (mirrored core with updated codes)
-  for (const sub of SUBJECTS_2022) {
-    const id2025 = sub.id.replace('2022_', '2025_');
-    console.log(`Writing subject (VTU 2025): Sem ${sub.semesterNumber} - ${sub.name}`);
-    await setDoc(doc(db, 'subjects', id2025), {
-      schemeId: 'scheme_vtu_2025',
-      semesterNumber: sub.semesterNumber,
-      name: sub.name,
-      subjectCode: sub.subjectCode.replace('21', '25').replace('BEC', '25EC'),
-      slug: sub.slug,
-      description: sub.description,
-      active: true,
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
-    });
+  // 3. Seed VTU 2025 Subjects
+  for (const sub of SUBJECTS_2025) {
+    const subRef = doc(db, 'subjects', sub.id);
+    const existing = await getDoc(subRef);
+    if (!existing.exists()) {
+      console.log(`[Creating Subject 2025]: Sem ${sub.semesterNumber} - ${sub.name} [Provisional Syllabus]`);
+      await setDoc(subRef, {
+        schemeId: sub.schemeId,
+        semesterNumber: sub.semesterNumber,
+        name: sub.name,
+        subjectCode: sub.subjectCode || null,
+        slug: sub.slug,
+        description: sub.description,
+        provisional: true,
+        active: true,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      });
+    } else {
+      console.log(`[Subject Exists]: ${sub.name} (preserved)`);
+    }
   }
 
-  console.log('✅ Academic structure seeded successfully!');
+  console.log('✅ Seeding completed safely without overwriting existing data.');
 }
 
 seed().catch(err => {

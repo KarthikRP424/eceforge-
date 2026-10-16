@@ -46,6 +46,10 @@ export default function SubmitResourcePage() {
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  useEffect(() => {
+    document.title = 'Submit Resource | ECEForge';
+  }, []);
+
   // Load schemes
   useEffect(() => {
     const q = query(collection(db, 'schemes'), where('active', '==', true), orderBy('name', 'asc'));
@@ -135,7 +139,7 @@ export default function SubmitResourcePage() {
         },
         async () => {
           try {
-            await addDoc(collection(db, 'resources'), {
+            await addDoc(collection(db, 'submissions'), {
               schemeId,
               semesterNumber: Number(semester),
               subjectId,
@@ -148,13 +152,10 @@ export default function SubmitResourcePage() {
               originalFileName: file.name,
               fileSize: file.size,
               contentType: file.type || 'application/pdf',
-              status: 'draft', // Submitted resources enter as drafts for admin verification
-              sourceReference: sourceAttribution.trim()
-                ? `${sourceAttribution.trim()} (Submitted by ${contributorName || 'Student'})`
-                : (contributorName ? `Submitted by ${contributorName}` : undefined),
-              uploadedBy: 'student_contributor',
+              status: 'pending', // Securely segregated in submissions queue
+              sourceAttribution: sourceAttribution.trim() || undefined,
+              contributorName: contributorName.trim() || 'Student Contributor',
               contributorEmail: contributorEmail.trim() || undefined,
-              downloadCount: 0,
               createdAt: serverTimestamp(),
               updatedAt: serverTimestamp(),
             });

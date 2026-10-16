@@ -2,7 +2,8 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { useAuth } from '@/context/AuthContext';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Input, Button } from '@/components/ui/Input';
+import { Input } from '@/components/ui/Input';
+import { Button } from '@/components/ui/Button';
 import { toast } from 'react-hot-toast';
 
 type LoginForm = {

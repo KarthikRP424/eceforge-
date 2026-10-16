@@ -32,6 +32,7 @@ export default function SemesterPage() {
           return;
         }
         setScheme(s);
+        document.title = `${s.name} — Semester ${semNum} ECE Subjects | ECEForge`;
         const subs = await getSubjectsBySchemeAndSemester(s.id, semNum);
         setSubjects(subs);
       } catch (err: any) {

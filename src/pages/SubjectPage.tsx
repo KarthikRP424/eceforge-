@@ -69,6 +69,7 @@ export default function SubjectPage() {
           return;
         }
         setSubject(sub);
+        document.title = `${sub.name}${sub.subjectCode ? ` (${sub.subjectCode})` : ''} | Semester ${semNum} | ECEForge`;
 
         const resList = await getPublishedResourcesBySubject(sub.id);
         setResources(resList);
@@ -138,11 +139,15 @@ export default function SubjectPage() {
         {/* Subject Header */}
         <div className="bg-white rounded-2xl p-6 sm:p-8 border border-navy-100 shadow-sm space-y-4">
           <div className="flex flex-wrap items-center gap-2">
-            {subject.subjectCode && (
+            {subject.subjectCode ? (
               <span className="font-mono text-xs font-bold px-3 py-1 rounded bg-navy-100 text-navy-800 tracking-wide">
                 {subject.subjectCode}
               </span>
-            )}
+            ) : subject.provisional ? (
+              <span className="text-2xs font-semibold px-2.5 py-1 rounded bg-amber-50 text-amber-800 border border-amber-200">
+                Provisional Curriculum (Code TBD by VTU)
+              </span>
+            ) : null}
             <span className="text-xs font-semibold px-2.5 py-1 rounded bg-cyan-50 text-cyan-800 border border-cyan-100">
               {scheme.name}
             </span>

@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/Button';
 import { Cpu, Home, ArrowLeft } from 'lucide-react';
 
 export default function NotFoundPage() {
+  useEffect(() => {
+    document.title = '404 - Page Not Found | ECEForge';
+  }, []);
   return (
     <div className="min-h-[70vh] flex items-center justify-center px-4 py-16">
       <div className="text-center max-w-md mx-auto space-y-5">

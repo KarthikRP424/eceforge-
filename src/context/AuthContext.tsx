@@ -29,23 +29,40 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [adminProfile, setAdminProfile] = useState<AdminUser | null>(null);
   const [loading, setLoading]         = useState(true);
 
+  const [isCustomClaimAdmin, setIsCustomClaimAdmin] = useState(false);
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async firebaseUser => {
       setUser(firebaseUser);
       if (firebaseUser) {
-        // Check if this user has an admin profile
         try {
+          // Check token custom claim first
+          const tokenResult = await firebaseUser.getIdTokenResult(true);
+          const hasClaim = tokenResult.claims.admin === true;
+          setIsCustomClaimAdmin(hasClaim);
+
+          // Check if this user has an admin profile in Firestore
           const snap = await getDoc(doc(db, 'admins', firebaseUser.uid));
           if (snap.exists()) {
             setAdminProfile({ uid: firebaseUser.uid, ...snap.data() } as AdminUser);
+          } else if (hasClaim) {
+            setAdminProfile({
+              uid: firebaseUser.uid,
+              email: firebaseUser.email || '',
+              displayName: firebaseUser.displayName || 'Administrator',
+              role: 'admin',
+            });
           } else {
             setAdminProfile(null);
           }
-        } catch {
+        } catch (err) {
+          console.warn('Error verifying admin authorization:', err);
           setAdminProfile(null);
+          setIsCustomClaimAdmin(false);
         }
       } else {
         setAdminProfile(null);
+        setIsCustomClaimAdmin(false);
       }
       setLoading(false);
     });
@@ -65,7 +82,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       value={{
         user,
         adminProfile,
-        isAdmin: !!adminProfile,
+        isAdmin: !!adminProfile || isCustomClaimAdmin,
         loading,
         login,
         logout,
