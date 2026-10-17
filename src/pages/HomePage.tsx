@@ -348,7 +348,7 @@ export default function HomePage() {
               {
                 step: '01',
                 title: 'Choose Your Scheme',
-                desc: 'Select the VTU scheme you're enrolled under. Each scheme has its own subject list.',
+                desc: "Select the VTU scheme you're enrolled under. Each scheme has its own subject list.",
               },
               {
                 step: '02',
