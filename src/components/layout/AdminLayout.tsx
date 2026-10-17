@@ -10,8 +10,13 @@ const ADMIN_NAV = [
   { to: '/admin/subjects', label: 'Subjects', icon: <BookOpen size={16} /> },
   { to: '/admin/resources', label: 'Resources', icon: <Upload size={16} /> },
 ];
+interface AdminLayoutProps {
+  children?: React.ReactNode;
+  title?: string;
+  description?: string;
+}
 
-export function AdminLayout({ title, description }: { title?: string; description?: string }) {
+export function AdminLayout({ title, description, children }: AdminLayoutProps) {
   const { adminProfile, logout } = useAuth();
 
   const handleLogout = async () => {
@@ -98,7 +103,7 @@ export function AdminLayout({ title, description }: { title?: string; descriptio
           </Link>
         </header>
         <section className="flex-1 overflow-auto p-6 bg-white">
-          <Outlet />
+          {children ?? <Outlet />}
         </section>
       </main>
     </div>

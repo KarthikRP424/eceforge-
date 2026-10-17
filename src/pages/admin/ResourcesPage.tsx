@@ -17,7 +17,7 @@ import { Button } from '@/components/ui/Button';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { Card } from '@/components/ui/Card';
 import { StatusBadge, CategoryBadge } from '@/components/ui/Badge';
-import { Input, Select, Textarea } from '@/components/ui/Input';
+import { Input, Select } from '@/components/ui/Input';
 import { AdminLayout } from '@/components/layout/AdminLayout';
 import {
   Plus,
@@ -33,7 +33,6 @@ import {
   X,
   Upload,
   Inbox,
-  AlertCircle,
 } from 'lucide-react';
 import type { Scheme, Subject, Resource, ResourceCategory, ResourceStatus, ResourceSubmission } from '@/types';
 import toast from 'react-hot-toast';

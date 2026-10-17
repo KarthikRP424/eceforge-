@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { collection, query, onSnapshot, updateDoc, deleteDoc, doc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { AdminLayout } from '@/components/layout/AdminLayout';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { Badge } from '@/components/ui/Badge';
 import { useAuth } from '@/context/AuthContext';
 import { Shield, Database, CheckCircle2, RefreshCw, Server, AlertCircle, Trash2, Check, ExternalLink } from 'lucide-react';
 import type { ResourceReport } from '@/types';

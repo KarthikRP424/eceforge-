@@ -7,7 +7,7 @@ import {
   where,
   orderBy,
 } from 'firebase/firestore';
-import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import { ref, uploadBytesResumable } from 'firebase/storage';
 import { db, storage } from '@/lib/firebase';
 import { createResource } from '@/lib/firestore';
 import { useAuth } from '@/context/AuthContext';
@@ -16,7 +16,7 @@ import { Card } from '@/components/ui/Card';
 import { Input, Select, Textarea } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { Alert } from '@/components/ui/EmptyState';
-import { Upload, FileText, CheckCircle2, Eye, X } from 'lucide-react';
+import { Upload, FileText, Eye } from 'lucide-react';
 import type { Scheme, Subject, ResourceCategory, ResourceStatus } from '@/types';
 import toast from 'react-hot-toast';
 
