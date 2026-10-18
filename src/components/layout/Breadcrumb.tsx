@@ -8,7 +8,6 @@ type BreadcrumbItem = {
 };
 
 export function Breadcrumb({ items }: { items: BreadcrumbItem[] }) {
-  const location = useLocation();
   const defaultItems: BreadcrumbItem[] = [
     { label: 'Home', to: '/' },
   ];

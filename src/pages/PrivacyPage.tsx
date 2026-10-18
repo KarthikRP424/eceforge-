@@ -1,9 +1,8 @@
-import React from 'react';
+import { useEffect } from 'react';
 import { Breadcrumb } from '@/components/layout/Breadcrumb';
-import { Card } from '@/components/ui/Card';
 
 export default function PrivacyPage() {
-  React.useEffect(() => {
+  useEffect(() => {
     document.title = 'Privacy Policy | ECEForge';
   }, []);
   return (
