@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { collection, query, where, orderBy, onSnapshot, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
@@ -6,7 +6,7 @@ import { Breadcrumb } from '@/components/layout/Breadcrumb';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Skeleton } from '@/components/ui/Skeleton';
-import { BookOpen, Layers, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { BookOpen, ArrowRight, CheckCircle2 } from 'lucide-react';
 import type { Scheme } from '@/types';
 
 export default function SchemesPage() {

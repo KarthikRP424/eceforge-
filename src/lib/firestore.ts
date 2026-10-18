@@ -16,12 +16,10 @@ import {
   limit,
   serverTimestamp,
   increment,
-  Timestamp,
   QueryConstraint,
-  writeBatch,
 } from 'firebase/firestore';
 import { db } from './firebase';
-import type { Scheme, Subject, Resource, ResourceCategory, ResourceStatus } from '@/types';
+import type { Scheme, Subject, Resource } from '@/types';
 
 // ---- Collection refs ----------------------------------------
 const schemesRef   = () => collection(db, 'schemes');

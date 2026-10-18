@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
-import { collection, doc, getDocs, query, where, orderBy, limit } from 'firebase/firestore';
+import { collection, query, where, orderBy, limit, onSnapshot } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import type { Scheme, Resource } from '@/types';
-import { onSnapshot } from 'firebase/firestore';
 
 /**
  * Hook to fetch all active schemes.

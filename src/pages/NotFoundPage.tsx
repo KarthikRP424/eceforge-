@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/Button';
-import { Cpu, Home, ArrowLeft } from 'lucide-react';
+import { Cpu, Home } from 'lucide-react';
 
 export default function NotFoundPage() {
   useEffect(() => {

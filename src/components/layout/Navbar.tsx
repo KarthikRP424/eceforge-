@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
-import { Menu, X, Laptop, BookOpen, Home, UserCog } from 'lucide-react';
+import { Menu, X, Laptop, BookOpen, Home, Info } from 'lucide-react';
 import { cn } from '@/utils';
 
 export function Navbar() {

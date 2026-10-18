@@ -1,10 +1,10 @@
-import React from 'react';
+import { useEffect } from 'react';
 import { Breadcrumb } from '@/components/layout/Breadcrumb';
 import { Card } from '@/components/ui/Card';
-import { Cpu, BookOpen, Layers, ShieldCheck, Target, Sparkles } from 'lucide-react';
+import { Cpu, BookOpen, Layers, ShieldCheck } from 'lucide-react';
 
 export default function AboutPage() {
-  React.useEffect(() => {
+  useEffect(() => {
     document.title = 'About ECEForge | Academic Knowledge Platform';
   }, []);
   return (

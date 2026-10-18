@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getSchemeBySlug, getSubjectsByScheme } from '@/lib/firestore';
 import { Breadcrumb } from '@/components/layout/Breadcrumb';
@@ -6,7 +6,7 @@ import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { EmptyState } from '@/components/ui/EmptyState';
-import { BookOpen, Layers, ArrowRight, GraduationCap } from 'lucide-react';
+import { ArrowRight, GraduationCap } from 'lucide-react';
 import type { Scheme, Subject } from '@/types';
 
 const SEMESTERS = [3, 4, 5, 6, 7];

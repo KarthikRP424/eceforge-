@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { Breadcrumb } from '@/components/layout/Breadcrumb';
 
 export default function TermsPage() {

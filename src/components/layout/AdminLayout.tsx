@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink, Outlet, Link } from 'react-router-dom';
-import { LogOut, Settings, BookOpen, Home, Users, Folder, Upload } from 'lucide-react';
+import { LogOut, Settings, BookOpen, Home, Folder, Upload } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { cn } from '@/utils';
 

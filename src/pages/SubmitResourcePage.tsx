@@ -1,13 +1,13 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, type ChangeEvent, type FormEvent } from 'react';
 import { collection, onSnapshot, query, where, orderBy, addDoc, serverTimestamp } from 'firebase/firestore';
-import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import { ref, uploadBytesResumable } from 'firebase/storage';
 import { db, storage } from '@/lib/firebase';
 import { Breadcrumb } from '@/components/layout/Breadcrumb';
 import { Card } from '@/components/ui/Card';
 import { Input, Select, Textarea } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { Alert } from '@/components/ui/EmptyState';
-import { Upload, FileText, CheckCircle2, Send, Cpu, BookOpen } from 'lucide-react';
+import { Upload, FileText, CheckCircle2, Send, Cpu } from 'lucide-react';
 import type { Scheme, Subject, ResourceCategory } from '@/types';
 import toast from 'react-hot-toast';
 
@@ -87,7 +87,7 @@ export default function SubmitResourcePage() {
     }
   }, [availableSubjects]);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0] ?? null;
     if (!f) return;
 
@@ -111,7 +111,7 @@ export default function SubmitResourcePage() {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!schemeId || !subjectId || !title.trim() || !file) {
       toast.error('Please fill all required fields and choose a PDF file.');

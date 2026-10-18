@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Home, ChevronRight } from 'lucide-react';
-import { cn } from '@/utils';
 
 type BreadcrumbItem = {
   label: string;

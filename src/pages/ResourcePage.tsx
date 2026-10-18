@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, type FormEvent } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { doc, getDoc, addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { ref, getDownloadURL } from 'firebase/storage';
@@ -6,7 +6,7 @@ import { db, storage } from '@/lib/firebase';
 import { recordDownload } from '@/lib/firestore';
 import { useAuth } from '@/context/AuthContext';
 import { Breadcrumb } from '@/components/layout/Breadcrumb';
-import { CategoryBadge, StatusBadge } from '@/components/ui/Badge';
+import { CategoryBadge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { Skeleton } from '@/components/ui/Skeleton';
@@ -16,9 +16,7 @@ import {
   Download,
   Share2,
   AlertTriangle,
-  Calendar,
   HardDrive,
-  Eye,
   FileText,
   Check,
   BookOpen,
@@ -121,7 +119,7 @@ export default function ResourcePage() {
     setTimeout(() => setCopied(false), 2500);
   };
 
-  const handleReportSubmit = async (e: React.FormEvent) => {
+  const handleReportSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!resourceId || !reportReason.trim()) return;
     setSubmittingReport(true);

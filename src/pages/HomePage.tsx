@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState, useEffect, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   Search, BookOpen, FileText, FlaskConical, HelpCircle,
@@ -7,8 +7,7 @@ import {
 import { useActiveSchemes, useRecentResources, usePopularResources } from '@/hooks';
 import { ResourceCardSkeleton } from '@/components/ui/Skeleton';
 import { CategoryBadge } from '@/components/ui/Badge';
-import { AVAILABLE_SEMESTERS, formatSemester, formatFileSize, CATEGORY_LABELS } from '@/types';
-import { formatDate } from '@/utils';
+import { AVAILABLE_SEMESTERS, formatSemester, formatFileSize } from '@/types';
 import type { Resource } from '@/types';
 
 // ── Resource Card ──────────────────────────────────────────────
@@ -77,7 +76,7 @@ function HeroSearch() {
   const [q, setQ] = useState('');
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (q.trim()) navigate(`/browse?q=${encodeURIComponent(q.trim())}`);
   };
@@ -153,7 +152,7 @@ export default function HomePage() {
   const { data: recent, loading: recentLoading }   = useRecentResources(8);
   const { data: popular, loading: popularLoading } = usePopularResources(6);
 
-  React.useEffect(() => {
+  useEffect(() => {
     document.title = 'ECEForge — Learn. Build. Engineer. | VTU ECE Academic Hub';
   }, []);
 

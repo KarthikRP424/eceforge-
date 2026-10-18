@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import {
   getSchemeBySlug,
@@ -11,18 +11,7 @@ import { Button } from '@/components/ui/Button';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { CategoryBadge } from '@/components/ui/Badge';
-import {
-  BookOpen,
-  FileText,
-  Download,
-  Eye,
-  Calendar,
-  Layers,
-  HelpCircle,
-  FlaskConical,
-  GraduationCap,
-  Sparkles,
-} from 'lucide-react';
+import { Download, Eye } from 'lucide-react';
 import type { Scheme, Subject, Resource, ResourceCategory } from '@/types';
 
 const CATEGORY_TABS: { key: string; label: string; category?: ResourceCategory }[] = [

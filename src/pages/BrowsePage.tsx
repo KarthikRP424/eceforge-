@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { collection, query, where, orderBy, onSnapshot } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
@@ -13,11 +13,8 @@ import {
   Search,
   Filter,
   X,
-  FileText,
-  Download,
   BookOpen,
   ArrowRight,
-  Sparkles,
 } from 'lucide-react';
 import type { Resource, Subject, Scheme, ResourceCategory } from '@/types';
 

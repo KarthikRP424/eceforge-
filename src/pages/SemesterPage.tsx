@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getSchemeBySlug, getSubjectsBySchemeAndSemester } from '@/lib/firestore';
 import { Breadcrumb } from '@/components/layout/Breadcrumb';
@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/Button';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Input } from '@/components/ui/Input';
-import { BookOpen, Search, ArrowRight, Layers, FileText } from 'lucide-react';
+import { Search, ArrowRight, FileText } from 'lucide-react';
 import type { Scheme, Subject } from '@/types';
 
 export default function SemesterPage() {
